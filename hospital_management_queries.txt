@@ -1,0 +1,936 @@
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 33
+Server version: 8.0.46 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2026, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use pfs3;
+Database changed
+mysql>
+mysql> -- Verify Data
+mysql> SELECT * FROM Authors;
++-----------+----------------+------------------------------------------+
+| author_id | author_name    | bio                                      |
++-----------+----------------+------------------------------------------+
+|         1 | Chetan Bhagat  | Indian author known for 5 Point Someone. |
+|         2 | Arundhati Roy  | Winner of the Man Booker Prize.          |
+|         3 | R.K. Narayan   | Creator of Malgudi Days.                 |
+|         4 | Amish Tripathi | Known for the Shiva Trilogy.             |
+|         5 | Chetan Bhagat  | Indian author known for 5 Point Someone. |
+|         6 | Arundhati Roy  | Winner of the Man Booker Prize.          |
+|         7 | R.K. Narayan   | Creator of Malgudi Days.                 |
+|         8 | Amish Tripathi | Known for the Shiva Trilogy.             |
++-----------+----------------+------------------------------------------+
+8 rows in set (0.11 sec)
+
+mysql> SELECT * FROM Genres;
++----------+------------+
+| genre_id | genre_name |
++----------+------------+
+|        1 | Fiction    |
+|        2 | Mythology  |
+|        3 | History    |
+|        4 | Romance    |
+|        5 | Fiction    |
+|        6 | Mythology  |
+|        7 | History    |
+|        8 | Romance    |
++----------+------------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Customers;
++-------------+--------------+------------+-----------+
+| customer_id | name         | phone      | city      |
++-------------+--------------+------------+-----------+
+|           1 | Rahul Sharma | 9876543210 | Mumbai    |
+|           2 | Priya Verma  | 9123456789 | Delhi     |
+|           3 | Amit Patel   | 9988776655 | Ahmedabad |
+|           4 | Sneha Reddy  | 8877665544 | Hyderabad |
+|           5 | Vikram Singh | 7766554433 | Mumbai    |
++-------------+--------------+------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Books;
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       1 | Five Point Someone      | 250.00 |             50 |         1 |        1 |
+|       2 | 2 States                | 300.00 |             40 |         1 |        4 |
+|       3 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|       4 | Malgudi Days            | 200.00 |            100 |         3 |        1 |
+|       5 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
+|       6 | Five Point Someone      | 250.00 |             50 |         1 |        1 |
+|       7 | 2 States                | 300.00 |             40 |         1 |        4 |
+|       8 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|       9 | Malgudi Days            | 200.00 |            100 |         3 |        1 |
+|      10 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
++---------+-------------------------+--------+----------------+-----------+----------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Orders;
++----------+-------------+------------+--------------+--------------+
+| order_id | customer_id | order_date | total_amount | payment_mode |
++----------+-------------+------------+--------------+--------------+
+|        1 |           1 | 2023-10-01 |       150.00 | UPI          |
+|        2 |           2 | 2023-10-02 |       240.00 | Card         |
+|        3 |           3 | 2023-10-05 |        45.00 | Cash         |
+|        4 |           1 | 2023-10-10 |       800.00 | UPI          |
+|        5 |           4 | 2023-10-12 |      1200.00 | Card         |
+|        6 |           1 | 2023-05-01 |         NULL | NULL         |
+|        7 |           2 | 2023-05-03 |         NULL | NULL         |
+|        8 |           1 | 2023-05-05 |         NULL | NULL         |
+|        9 |           3 | 2023-06-01 |         NULL | NULL         |
+|       10 |           1 | 2023-05-01 |         NULL | NULL         |
+|       11 |           2 | 2023-05-03 |         NULL | NULL         |
+|       12 |           1 | 2023-05-05 |         NULL | NULL         |
+|       13 |           3 | 2023-06-01 |         NULL | NULL         |
++----------+-------------+------------+--------------+--------------+
+13 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Order_Details;
++-----------+----------+---------+------------------+------------------------+
+| detail_id | order_id | book_id | quantity_ordered | price_at_time_of_order |
++-----------+----------+---------+------------------+------------------------+
+|         1 |        1 |       1 |                1 |                 250.00 |
+|         2 |        1 |       4 |                2 |                 200.00 |
+|         3 |        2 |       5 |                1 |                 399.00 |
+|         4 |        3 |       2 |                1 |                 300.00 |
+|         5 |        4 |       3 |                1 |                 450.00 |
+|         6 |        1 |       1 |                1 |                 250.00 |
+|         7 |        1 |       4 |                2 |                 200.00 |
+|         8 |        2 |       5 |                1 |                 399.00 |
+|         9 |        3 |       2 |                1 |                 300.00 |
+|        10 |        4 |       3 |                1 |                 450.00 |
++-----------+----------+---------+------------------+------------------------+
+10 rows in set (0.00 sec)
+
+mysql> -- 1. List all books that cost less than ₹300.
+mysql> SELECT *
+    -> FROM Books
+    -> WHERE price < 300;
++---------+--------------------+--------+----------------+-----------+----------+
+| book_id | title              | price  | stock_quantity | author_id | genre_id |
++---------+--------------------+--------+----------------+-----------+----------+
+|       1 | Five Point Someone | 250.00 |             50 |         1 |        1 |
+|       4 | Malgudi Days       | 200.00 |            100 |         3 |        1 |
+|       6 | Five Point Someone | 250.00 |             50 |         1 |        1 |
+|       9 | Malgudi Days       | 200.00 |            100 |         3 |        1 |
++---------+--------------------+--------+----------------+-----------+----------+
+4 rows in set (0.00 sec)
+
+mysql> -- 2. Find the email address of the customer named Vihaan Reddy. insted of email use phone
+mysql> SELECT phone
+    -> FROM Customers
+    -> WHERE name = 'Vihaan Reddy';
+Empty set (2.01 sec)
+
+mysql> -- 3. Display the titles of all books that belong to the Fiction genre
+mysql> SELECT b.title
+    -> FROM Books b
+    -> JOIN Genres g
+    -> ON b.genre_id = g.genre_id
+    -> WHERE g.genre_name = 'Fiction';
++-------------------------+
+| title                   |
++-------------------------+
+| Five Point Someone      |
+| The God of Small Things |
+| Malgudi Days            |
+| Five Point Someone      |
+| The God of Small Things |
+| Malgudi Days            |
++-------------------------+
+6 rows in set (0.00 sec)
+
+mysql> -- 4. Display the names of all authors in alphabetical order.
+mysql> SELECT author_name
+    -> FROM Authors
+    -> ORDER BY author_name ASC;
++----------------+
+| author_name    |
++----------------+
+| Amish Tripathi |
+| Amish Tripathi |
+| Arundhati Roy  |
+| Arundhati Roy  |
+| Chetan Bhagat  |
+| Chetan Bhagat  |
+| R.K. Narayan   |
+| R.K. Narayan   |
++----------------+
+8 rows in set (0.12 sec)
+
+mysql> -- 5. Count how many customers belong to the city Mumbai.
+mysql> SELECT COUNT(*) AS total_customers
+    -> FROM Customers
+    -> WHERE city = 'Mumbai';
++-----------------+
+| total_customers |
++-----------------+
+|               2 |
++-----------------+
+1 row in set (0.60 sec)
+
+mysql> -- 6. Display the details of the most expensive book available in the bookstore.
+mysql> SELECT *
+    -> FROM Books
+    -> WHERE price = (
+    ->     SELECT MAX(price)
+    ->     FROM Books
+    -> );
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       3 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|       8 | The God of Small Things | 450.00 |             20 |         2 |        1 |
++---------+-------------------------+--------+----------------+-----------+----------+
+2 rows in set (0.00 sec)
+
+mysql> -- 7. Show the title, price, and stock quantity of all books.
+mysql> SELECT title, price, stock_quantity
+    -> FROM Books;
++-------------------------+--------+----------------+
+| title                   | price  | stock_quantity |
++-------------------------+--------+----------------+
+| Five Point Someone      | 250.00 |             50 |
+| 2 States                | 300.00 |             40 |
+| The God of Small Things | 450.00 |             20 |
+| Malgudi Days            | 200.00 |            100 |
+| The Immortals of Meluha | 399.00 |             60 |
+| Five Point Someone      | 250.00 |             50 |
+| 2 States                | 300.00 |             40 |
+| The God of Small Things | 450.00 |             20 |
+| Malgudi Days            | 200.00 |            100 |
+| The Immortals of Meluha | 399.00 |             60 |
++-------------------------+--------+----------------+
+10 rows in set (0.00 sec)
+
+mysql> -- 8. Display all customers who registered after 1st January 2023.
+mysql> -- Your Customers table does not have a join_date column.
+mysql> -- 9. Find all books whose stock quantity is greater than 20.
+mysql> -- SELECT *
+mysql> FROM Books
+    -> WHERE stock_quantity > 20;^C
+mysql> SELECT *
+    -> FROM Books
+    -> WHERE stock_quantity > 20;
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       1 | Five Point Someone      | 250.00 |             50 |         1 |        1 |
+|       2 | 2 States                | 300.00 |             40 |         1 |        4 |
+|       4 | Malgudi Days            | 200.00 |            100 |         3 |        1 |
+|       5 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
+|       6 | Five Point Someone      | 250.00 |             50 |         1 |        1 |
+|       7 | 2 States                | 300.00 |             40 |         1 |        4 |
+|       9 | Malgudi Days            | 200.00 |            100 |         3 |        1 |
+|      10 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
++---------+-------------------------+--------+----------------+-----------+----------+
+8 rows in set (0.00 sec)
+
+mysql> -- 10. Display all genres available in the bookstore.
+mysql> SELECT *
+    -> FROM Genres;
++----------+------------+
+| genre_id | genre_name |
++----------+------------+
+|        1 | Fiction    |
+|        2 | Mythology  |
+|        3 | History    |
+|        4 | Romance    |
+|        5 | Fiction    |
+|        6 | Mythology  |
+|        7 | History    |
+|        8 | Romance    |
++----------+------------+
+8 rows in set (0.00 sec)
+
+mysql> -- 11. Find all books written by R.K. Narayan.
+mysql> SELECT b.title
+    -> FROM Books b
+    -> JOIN Authors a
+    -> ON b.author_id = a.author_id
+    -> WHERE a.author_name = 'R.K. Narayan';
++--------------+
+| title        |
++--------------+
+| Malgudi Days |
+| Malgudi Days |
++--------------+
+2 rows in set (0.00 sec)
+
+mysql> -- 12. Display all orders placed by a specific customer.
+mysql> SELECT *
+    -> FROM Orders
+    -> WHERE customer_id = 1;
++----------+-------------+------------+--------------+--------------+
+| order_id | customer_id | order_date | total_amount | payment_mode |
++----------+-------------+------------+--------------+--------------+
+|        1 |           1 | 2023-10-01 |       150.00 | UPI          |
+|        4 |           1 | 2023-10-10 |       800.00 | UPI          |
+|        6 |           1 | 2023-05-01 |         NULL | NULL         |
+|        8 |           1 | 2023-05-05 |         NULL | NULL         |
+|       10 |           1 | 2023-05-01 |         NULL | NULL         |
+|       12 |           1 | 2023-05-05 |         NULL | NULL         |
++----------+-------------+------------+--------------+--------------+
+6 rows in set (0.36 sec)
+
+mysql> -- 13. Find the cheapest book in the bookstore.
+mysql> SELECT *
+    -> FROM Books
+    -> WHERE price = (
+    ->     SELECT MIN(price)
+    ->     FROM Books
+    -> );
++---------+--------------+--------+----------------+-----------+----------+
+| book_id | title        | price  | stock_quantity | author_id | genre_id |
++---------+--------------+--------+----------------+-----------+----------+
+|       4 | Malgudi Days | 200.00 |            100 |         3 |        1 |
+|       9 | Malgudi Days | 200.00 |            100 |         3 |        1 |
++---------+--------------+--------+----------------+-----------+----------+
+2 rows in set (0.00 sec)
+
+mysql> -- 14. Display the names of customers whose email ends with gmail.com.
+mysql>
+mysql> -- ❌ Cannot be answered.
+mysql> -- There is no email column in your Customers table
+mysql> -- 15. Count the total number of books available in the bookstore.
+mysql> SELECT COUNT(*) AS total_books
+    -> FROM Books;
++-------------+
+| total_books |
++-------------+
+|          10 |
++-------------+
+
+LEVEL---2
+----------
+mysql> -- 1. Display the title of every book along with its corresponding author's name.
+mysql> SELECT b.title, a.author_name
+    -> FROM Books b
+    -> JOIN Authors a
+    -> ON b.author_id = a.author_id;
++-------------------------+----------------+
+| title                   | author_name    |
++-------------------------+----------------+
+| Five Point Someone      | Chetan Bhagat  |
+| 2 States                | Chetan Bhagat  |
+| The God of Small Things | Arundhati Roy  |
+| Malgudi Days            | R.K. Narayan   |
+| The Immortals of Meluha | Amish Tripathi |
+| Five Point Someone      | Chetan Bhagat  |
+| 2 States                | Chetan Bhagat  |
+| The God of Small Things | Arundhati Roy  |
+| Malgudi Days            | R.K. Narayan   |
+| The Immortals of Meluha | Amish Tripathi |
++-------------------------+----------------+
+10 rows in set (0.00 sec)
+
+mysql> -- 2. Calculate the total amount spent by the customer Aarav Sharma.
+mysql> -- ❌ Cannot be answered exactly because Aarav Sharma is not in your Customers table.
+mysql> -- Using an existing customer (e.g., Rahul Sharma):
+mysql> SELECT c.name,
+    ->        SUM(od.quantity_ordered * od.price_at_time_of_order) AS total_spent
+    -> FROM Customers c
+    -> JOIN Orders o
+    -> ON c.customer_id = o.customer_id
+    -> JOIN Order_Details od
+    -> ON o.order_id = od.order_id
+    -> WHERE c.name = 'Rahul Sharma'
+    -> GROUP BY c.name;
++--------------+-------------+
+| name         | total_spent |
++--------------+-------------+
+| Rahul Sharma |     2200.00 |
++--------------+-------------+
+1 row in set (0.01 sec)
+
+mysql> -- 3. Find the genre that has the highest total stock quantity.
+mysql> SELECT g.genre_name,
+    ->        SUM(b.stock_quantity) AS total_stock
+    -> FROM Genres g
+    -> JOIN Books b
+    -> ON g.genre_id = b.genre_id
+    -> GROUP BY g.genre_name
+    -> ORDER BY total_stock DESC
+    -> LIMIT 1;
++------------+-------------+
+| genre_name | total_stock |
++------------+-------------+
+| Fiction    |         340 |
++------------+-------------+
+1 row in set (0.09 sec)
+
+mysql> -- 4. Display all orders placed during the month of May 2023.
+mysql> SELECT *
+    -> FROM Orders
+    -> WHERE MONTH(order_date) = 5
+    ->   AND YEAR(order_date) = 2023;
++----------+-------------+------------+--------------+--------------+
+| order_id | customer_id | order_date | total_amount | payment_mode |
++----------+-------------+------------+--------------+--------------+
+|        6 |           1 | 2023-05-01 |         NULL | NULL         |
+|        7 |           2 | 2023-05-03 |         NULL | NULL         |
+|        8 |           1 | 2023-05-05 |         NULL | NULL         |
+|       10 |           1 | 2023-05-01 |         NULL | NULL         |
+|       11 |           2 | 2023-05-03 |         NULL | NULL         |
+|       12 |           1 | 2023-05-05 |         NULL | NULL         |
++----------+-------------+------------+--------------+--------------+
+6 rows in set (1.02 sec)
+
+mysql> -- 5. Find the books that have never been ordered by any customer.
+mysql> SELECT title
+    -> FROM Books
+    -> WHERE book_id NOT IN (
+    ->     SELECT book_id
+    ->     FROM Order_Details
+    -> );
++-------------------------+
+| title                   |
++-------------------------+
+| Five Point Someone      |
+| 2 States                |
+| The God of Small Things |
+| Malgudi Days            |
+| The Immortals of Meluha |
++-------------------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 6. Calculate the total number of books sold by each author.
+mysql> SELECT a.author_name,
+    ->        SUM(od.quantity_ordered) AS total_books_sold
+    -> FROM Authors a
+    -> JOIN Books b
+    -> ON a.author_id = b.author_id
+    -> JOIN Order_Details od
+    -> ON b.book_id = od.book_id
+    -> GROUP BY a.author_name;
++----------------+------------------+
+| author_name    | total_books_sold |
++----------------+------------------+
+| Chetan Bhagat  |                4 |
+| R.K. Narayan   |                4 |
+| Amish Tripathi |                2 |
+| Arundhati Roy  |                2 |
++----------------+------------------+
+4 rows in set (0.00 sec)
+
+mysql> -- 7. Display each customer's name along with the total number of orders they have placed.
+mysql> SELECT c.name,
+    ->        COUNT(o.order_id) AS total_orders
+    -> FROM Customers c
+    -> LEFT JOIN Orders o
+    -> ON c.customer_id = o.customer_id
+    -> GROUP BY c.customer_id, c.name;
++--------------+--------------+
+| name         | total_orders |
++--------------+--------------+
+| Rahul Sharma |            6 |
+| Priya Verma  |            3 |
+| Amit Patel   |            3 |
+| Sneha Reddy  |            1 |
+| Vikram Singh |            0 |
++--------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 8. Find the average price of books available in each genre.
+mysql> SELECT g.genre_name,
+    ->        AVG(b.price) AS average_price
+    -> FROM Genres g
+    -> JOIN Books b
+    -> ON g.genre_id = b.genre_id
+    -> GROUP BY g.genre_name;
++------------+---------------+
+| genre_name | average_price |
++------------+---------------+
+| Fiction    |    300.000000 |
+| Romance    |    300.000000 |
+| Mythology  |    399.000000 |
++------------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> -- 9. Display all books along with their genre names.
+mysql> SELECT b.title,
+    ->        g.genre_name
+    -> FROM Books b
+    -> JOIN Genres g
+    -> ON b.genre_id = g.genre_id;
++-------------------------+------------+
+| title                   | genre_name |
++-------------------------+------------+
+| Five Point Someone      | Fiction    |
+| 2 States                | Romance    |
+| The God of Small Things | Fiction    |
+| Malgudi Days            | Fiction    |
+| The Immortals of Meluha | Mythology  |
+| Five Point Someone      | Fiction    |
+| 2 States                | Romance    |
+| The God of Small Things | Fiction    |
+| Malgudi Days            | Fiction    |
+| The Immortals of Meluha | Mythology  |
++-------------------------+------------+
+10 rows in set (0.00 sec)
+
+mysql> -- 10. Find customers who have placed more than three orders.
+mysql> SELECT c.name,
+    ->        COUNT(o.order_id) AS total_orders
+    -> FROM Customers c
+    -> JOIN Orders o
+    -> ON c.customer_id = o.customer_id
+    -> GROUP BY c.customer_id, c.name
+    -> HAVING COUNT(o.order_id) > 3;
++--------------+--------------+
+| name         | total_orders |
++--------------+--------------+
+| Rahul Sharma |            6 |
++--------------+--------------+
+1 row in set (0.00 sec)
+
+mysql> -- 11. Display the total quantity of books sold for each book title.
+mysql> SELECT b.title,
+    ->        SUM(od.quantity_ordered) AS total_quantity_sold
+    -> FROM Books b
+    -> JOIN Order_Details od
+    -> ON b.book_id = od.book_id
+    -> GROUP BY b.book_id, b.title;
++-------------------------+---------------------+
+| title                   | total_quantity_sold |
++-------------------------+---------------------+
+| Five Point Someone      |                   2 |
+| Malgudi Days            |                   4 |
+| The Immortals of Meluha |                   2 |
+| 2 States                |                   2 |
+| The God of Small Things |                   2 |
++-------------------------+---------------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 12. Find the total revenue generated by each book.
+mysql> SELECT b.title,
+    ->        SUM(od.quantity_ordered * od.price_at_time_of_order) AS total_revenue
+    -> FROM Books b
+    -> JOIN Order_Details od
+    -> ON b.book_id = od.book_id
+    -> GROUP BY b.book_id, b.title;
++-------------------------+---------------+
+| title                   | total_revenue |
++-------------------------+---------------+
+| Five Point Someone      |        500.00 |
+| Malgudi Days            |        800.00 |
+| The Immortals of Meluha |        798.00 |
+| 2 States                |        600.00 |
+| The God of Small Things |        900.00 |
++-------------------------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 13. Display all orders along with customer names and order dates.
+mysql> SELECT o.order_id,
+    ->        c.name,
+    ->        o.order_date
+    -> FROM Orders o
+    -> JOIN Customers c
+    -> ON o.customer_id = c.customer_id;
++----------+--------------+------------+
+| order_id | name         | order_date |
++----------+--------------+------------+
+|        1 | Rahul Sharma | 2023-10-01 |
+|        4 | Rahul Sharma | 2023-10-10 |
+|        6 | Rahul Sharma | 2023-05-01 |
+|        8 | Rahul Sharma | 2023-05-05 |
+|       10 | Rahul Sharma | 2023-05-01 |
+|       12 | Rahul Sharma | 2023-05-05 |
+|        2 | Priya Verma  | 2023-10-02 |
+|        7 | Priya Verma  | 2023-05-03 |
+|       11 | Priya Verma  | 2023-05-03 |
+|        3 | Amit Patel   | 2023-10-05 |
+|        9 | Amit Patel   | 2023-06-01 |
+|       13 | Amit Patel   | 2023-06-01 |
+|        5 | Sneha Reddy  | 2023-10-12 |
++----------+--------------+------------+
+13 rows in set (0.00 sec)
+
+mysql> -- 14. Find authors who have written more than two books.
+mysql> SELECT a.author_name,
+    ->        COUNT(b.book_id) AS total_books
+    -> FROM Authors a
+    -> JOIN Books b
+    -> ON a.author_id = b.author_id
+    -> GROUP BY a.author_id, a.author_name
+    -> HAVING COUNT(b.book_id) > 2;
++---------------+-------------+
+| author_name   | total_books |
++---------------+-------------+
+| Chetan Bhagat |           4 |
++---------------+-------------+
+1 row in set (0.00 sec)
+
+mysql> -- 15. Display genres that contain more than five books.
+mysql> SELECT g.genre_name,
+    ->        COUNT(b.book_id) AS total_books
+    -> FROM Genres g
+    -> JOIN Books b
+    -> ON g.genre_id = b.genre_id
+    -> GROUP BY g.genre_id, g.genre_name
+    -> HAVING COUNT(b.book_id) > 5;
++------------+-------------+
+| genre_name | total_books |
++------------+-------------+
+| Fiction    |           6 |
++------------+-------------+
+
+LEVEL--3
+-------------
+mysql> -- 1. Find the customer who has placed the highest number of orders.
+mysql> SELECT c.name, COUNT(o.order_id) AS total_orders
+    -> FROM Customers c
+    -> JOIN Orders o
+    -> ON c.customer_id = o.customer_id
+    -> GROUP BY c.customer_id, c.name
+    -> ORDER BY total_orders DESC
+    -> LIMIT 1;
++--------------+--------------+
+| name         | total_orders |
++--------------+--------------+
+| Rahul Sharma |            6 |
++--------------+--------------+
+1 row in set (0.00 sec)
+
+mysql> -- 2. Display authors whose average book price is greater than ₹300.
+mysql> SELECT a.author_name, AVG(b.price) AS average_price
+    -> FROM Authors a
+    -> JOIN Books b
+    -> ON a.author_id = b.author_id
+    -> GROUP BY a.author_id, a.author_name
+    -> HAVING AVG(b.price) > 300;
++----------------+---------------+
+| author_name    | average_price |
++----------------+---------------+
+| Arundhati Roy  |    450.000000 |
+| Amish Tripathi |    399.000000 |
++----------------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> -- 3. Find the best-selling book based on the highest quantity sold.
+mysql> SELECT b.title,
+    ->        SUM(od.quantity_ordered) AS total_quantity_sold
+    -> FROM Books b
+    -> JOIN Order_Details od
+    -> ON b.book_id = od.book_id
+    -> GROUP BY b.book_id, b.title
+    -> ORDER BY total_quantity_sold DESC
+    -> LIMIT 1;
++--------------+---------------------+
+| title        | total_quantity_sold |
++--------------+---------------------+
+| Malgudi Days |                   4 |
++--------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql> -- 4. Display customers who purchased both "Malgudi Days" and "Five Point Someone".
+mysql> SELECT c.name
+    -> FROM Customers c
+    -> JOIN Orders o
+    -> ON c.customer_id = o.customer_id
+    -> JOIN Order_Details od
+    -> ON o.order_id = od.order_id
+    -> JOIN Books b
+    -> ON od.book_id = b.book_id
+    -> WHERE b.title IN ('Malgudi Days','Five Point Someone')
+    -> GROUP BY c.customer_id, c.name
+    -> HAVING COUNT(DISTINCT b.title)=2;
++--------------+
+| name         |
++--------------+
+| Rahul Sharma |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> -- 5. Find customers who have not placed any orders during the last six months.
+mysql> SELECT *
+    -> FROM Customers
+    -> WHERE customer_id NOT IN
+    -> (
+    -> SELECT customer_id
+    -> FROM Orders
+    -> WHERE order_date >= DATE_SUB(CURDATE(),INTERVAL 6 MONTH)
+    -> );
++-------------+--------------+------------+-----------+
+| customer_id | name         | phone      | city      |
++-------------+--------------+------------+-----------+
+|           1 | Rahul Sharma | 9876543210 | Mumbai    |
+|           2 | Priya Verma  | 9123456789 | Delhi     |
+|           3 | Amit Patel   | 9988776655 | Ahmedabad |
+|           4 | Sneha Reddy  | 8877665544 | Hyderabad |
+|           5 | Vikram Singh | 7766554433 | Mumbai    |
++-------------+--------------+------------+-----------+
+5 rows in set (0.01 sec)
+
+mysql> -- 6. Calculate the total revenue generated from books belonging to the Fiction genre.
+mysql> SELECT g.genre_name,
+    -> SUM(od.quantity_ordered*od.price_at_time_of_order) AS total_revenue
+    -> FROM Genres g
+    -> JOIN Books b
+    -> ON g.genre_id=b.genre_id
+    -> JOIN Order_Details od
+    -> ON b.book_id=od.book_id
+    -> WHERE g.genre_name='Fiction'
+    -> GROUP BY g.genre_name;
++------------+---------------+
+| genre_name | total_revenue |
++------------+---------------+
+| Fiction    |       2200.00 |
++------------+---------------+
+1 row in set (0.00 sec)
+
+mysql> -- 7. Find the top five customers based on the total amount spent.
+mysql> SELECT c.name,
+    -> SUM(od.quantity_ordered*od.price_at_time_of_order) AS total_spent
+    -> FROM Customers c
+    -> JOIN Orders o
+    -> ON c.customer_id=o.customer_id
+    -> JOIN Order_Details od
+    -> ON o.order_id=od.order_id
+    -> GROUP BY c.customer_id,c.name
+    -> ORDER BY total_spent DESC
+    -> LIMIT 5;
++--------------+-------------+
+| name         | total_spent |
++--------------+-------------+
+| Rahul Sharma |     2200.00 |
+| Priya Verma  |      798.00 |
+| Amit Patel   |      600.00 |
++--------------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> -- 8. Display the book that generated the highest revenue.
+mysql> SELECT b.title,
+    -> SUM(od.quantity_ordered*od.price_at_time_of_order) AS revenue
+    -> FROM Books b
+    -> JOIN Order_Details od
+    -> ON b.book_id=od.book_id
+    -> GROUP BY b.book_id,b.title
+    -> ORDER BY revenue DESC
+    -> LIMIT 1;
++-------------------------+---------+
+| title                   | revenue |
++-------------------------+---------+
+| The God of Small Things |  900.00 |
++-------------------------+---------+
+1 row in set (0.00 sec)
+
+mysql> -- 9. Find the author whose books have generated the maximum sales revenue.
+mysql> SELECT a.author_name,
+    -> SUM(od.quantity_ordered*od.price_at_time_of_order) AS revenue
+    -> FROM Authors a
+    -> JOIN Books b
+    -> ON a.author_id=b.author_id
+    -> JOIN Order_Details od
+    -> ON b.book_id=od.book_id
+    -> GROUP BY a.author_id,a.author_name
+    -> ORDER BY revenue DESC
+    -> LIMIT 1;
++---------------+---------+
+| author_name   | revenue |
++---------------+---------+
+| Chetan Bhagat | 1100.00 |
++---------------+---------+
+1 row in set (0.01 sec)
+
+mysql> -- 10. Display customers who have purchased books from every available genre.
+mysql> SELECT c.name
+    -> FROM Customers c
+    -> JOIN Orders o
+    -> ON c.customer_id=o.customer_id
+    -> JOIN Order_Details od
+    -> ON o.order_id=od.order_id
+    -> JOIN Books b
+    -> ON od.book_id=b.book_id
+    -> GROUP BY c.customer_id,c.name
+    -> HAVING COUNT(DISTINCT b.genre_id)=
+    -> (
+    -> SELECT COUNT(DISTINCT genre_id)
+    -> FROM Genres
+    -> );
+Empty set (0.01 sec)
+
+mysql> -- 11. Find books whose price is higher than the average price of all books.
+mysql> SELECT *
+    -> FROM Books
+    -> WHERE price>
+    -> (
+    -> SELECT AVG(price)
+    -> FROM Books
+    -> );
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       3 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|       5 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
+|       8 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|      10 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
++---------+-------------------------+--------+----------------+-----------+----------+
+4 rows in set (0.00 sec)
+
+mysql> -- 12. Display the second most expensive book available in the bookstore.
+mysql> SELECT *
+    -> FROM Books
+    -> ORDER BY price DESC
+    -> LIMIT 1 OFFSET 1;
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       3 | The God of Small Things | 450.00 |             20 |         2 |        1 |
++---------+-------------------------+--------+----------------+-----------+----------+
+1 row in set (0.00 sec)
+
+mysql> -- 13. Find customers who have ordered more books than the average number of books ordered per customer.
+mysql> SELECT c.name,
+    -> SUM(od.quantity_ordered) AS total_books
+    -> FROM Customers c
+    -> JOIN Orders o
+    -> ON c.customer_id=o.customer_id
+    -> JOIN Order_Details od
+    -> ON o.order_id=od.order_id
+    -> GROUP BY c.customer_id,c.name
+    -> HAVING total_books >
+    -> (
+    -> SELECT AVG(total_quantity)
+    -> FROM
+    -> (
+    -> SELECT SUM(quantity_ordered) AS total_quantity
+    -> FROM Orders o
+    -> JOIN Order_Details od
+    -> ON o.order_id=od.order_id
+    -> GROUP BY customer_id
+    -> ) AS avg_table
+    -> );
++--------------+-------------+
+| name         | total_books |
++--------------+-------------+
+| Rahul Sharma |           8 |
++--------------+-------------+
+1 row in set (0.00 sec)
+
+mysql> -- 14. Display the monthly revenue generated by the bookstore.
+mysql> SELECT MONTH(order_date) AS month,
+    -> SUM(od.quantity_ordered*od.price_at_time_of_order) AS revenue
+    -> FROM Orders o
+    -> JOIN Order_Details od
+    -> ON o.order_id=od.order_id
+    -> GROUP BY MONTH(order_date);
++-------+---------+
+| month | revenue |
++-------+---------+
+|    10 | 3598.00 |
++-------+---------+
+1 row in set (0.00 sec)
+
+mysql> -- 15. Find the month in which the bookstore recorded the highest sales.
+mysql> SELECT MONTH(order_date) AS month,
+    -> SUM(od.quantity_ordered*od.price_at_time_of_order) AS revenue
+    -> FROM Orders o
+    -> JOIN Order_Details od
+    -> ON o.order_id=od.order_id
+    -> GROUP BY MONTH(order_date)
+    -> ORDER BY revenue DESC
+    -> LIMIT 1;
++-------+---------+
+| month | revenue |
++-------+---------+
+|    10 | 3598.00 |
++-------+---------+
+1 row in set (0.00 sec)
+
+mysql> -- 16. Display the top three best-selling authors based on total books sold.
+mysql> SELECT a.author_name,
+    -> SUM(od.quantity_ordered) AS total_books_sold
+    -> FROM Authors a
+    -> JOIN Books b
+    -> ON a.author_id=b.author_id
+    -> JOIN Order_Details od
+    -> ON b.book_id=od.book_id
+    -> GROUP BY a.author_id,a.author_name
+    -> ORDER BY total_books_sold DESC
+    -> LIMIT 3;
++----------------+------------------+
+| author_name    | total_books_sold |
++----------------+------------------+
+| Chetan Bhagat  |                4 |
+| R.K. Narayan   |                4 |
+| Amish Tripathi |                2 |
++----------------+------------------+
+3 rows in set (0.00 sec)
+
+mysql> -- 17. Find books that have never been sold but still have stock available.
+mysql> SELECT *
+    -> FROM Books
+    -> WHERE stock_quantity>0
+    -> AND book_id NOT IN
+    -> (
+    -> SELECT book_id
+    -> FROM Order_Details
+    -> );
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       6 | Five Point Someone      | 250.00 |             50 |         1 |        1 |
+|       7 | 2 States                | 300.00 |             40 |         1 |        4 |
+|       8 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|       9 | Malgudi Days            | 200.00 |            100 |         3 |        1 |
+|      10 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
++---------+-------------------------+--------+----------------+-----------+----------+
+5 rows in set (0.00 sec)
+
+mysql> -- 18. Display customers who purchased books from more than three different genres.
+mysql> SELECT c.name
+    -> FROM Customers c
+    -> JOIN Orders o
+    -> ON c.customer_id=o.customer_id
+    -> JOIN Order_Details od
+    -> ON o.order_id=od.order_id
+    -> JOIN Books b
+    -> ON od.book_id=b.book_id
+    -> GROUP BY c.customer_id,c.name
+    -> HAVING COUNT(DISTINCT b.genre_id)>3;
+Empty set (0.00 sec)
+
+mysql> -- 19. Find the genre that generated the highest revenue.
+mysql> SELECT g.genre_name,
+    -> SUM(od.quantity_ordered*od.price_at_time_of_order) AS revenue
+    -> FROM Genres g
+    -> JOIN Books b
+    -> ON g.genre_id=b.genre_id
+    -> JOIN Order_Details od
+    -> ON b.book_id=od.book_id
+    -> GROUP BY g.genre_id,g.genre_name
+    -> ORDER BY revenue DESC
+    -> LIMIT 1;
++------------+---------+
+| genre_name | revenue |
++------------+---------+
+| Fiction    | 2200.00 |
++------------+---------+
+1 row in set (0.00 sec)
+
+mysql> -- 20. Display the author whose books have the highest average sales quantity.
+mysql> SELECT a.author_name,
+    -> AVG(od.quantity_ordered) AS average_sales
+    -> FROM Authors a
+    -> JOIN Books b
+    -> ON a.author_id=b.author_id
+    -> JOIN Order_Details od
+    -> ON b.book_id=od.book_id
+    -> GROUP BY a.author_id,a.author_name
+    -> ORDER BY average_sales DESC
+    -> LIMIT 1;
++--------------+---------------+
+| author_name  | average_sales |
++--------------+---------------+
+| R.K. Narayan |        2.0000 |
++--------------+---------------+
